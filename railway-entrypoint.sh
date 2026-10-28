@@ -32,7 +32,7 @@ chown root:www-data owa-config.php && chmod 640 owa-config.php
 trap 'kill $(jobs -p) 2>/dev/null; wait; exit 0' TERM INT
 
 # On a fresh deploy MariaDB may still be initializing.
-q() { MYSQL_PWD=$DB_PASSWORD mariadb -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USER" -N -B "$DB_NAME" -e "$1"; }
+q() { MYSQL_PWD=$DB_PASSWORD mariadb --skip-ssl-verify-server-cert -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USER" -N -B "$DB_NAME" -e "$1"; }
 for i in $(seq 90); do
   q 'select 1' >/dev/null 2>&1 && break
   [ "$i" = 90 ] && { echo "railway: database not reachable after 3 minutes"; exit 1; }
