@@ -1,0 +1,112 @@
+{
+  "services": {
+    "cbaa5138-c3a5-48cd-955e-cace2764ce26": {
+      "icon": "https://raw.githubusercontent.com/Open-Web-Analytics/Open-Web-Analytics/master/modules/Base/i/owa-logo-100w.png",
+      "name": "Open Web Analytics",
+      "build": {
+        "dockerfilePath": "Dockerfile"
+      },
+      "deploy": {
+        "startCommand": null,
+        "healthcheckPath": "/healthz",
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 10
+      },
+      "source": {
+        "repo": "https://github.com/two-workspaces/open-web-analytics",
+        "rootDirectory": "/"
+      },
+      "variables": {
+        "PORT": {
+          "defaultValue": "8080",
+          "description": "Port Apache listens on - leave as is",
+          "isOptional": false
+        },
+        "OWA_URL": {
+          "defaultValue": "https://${{RAILWAY_PUBLIC_DOMAIN}}",
+          "description": "OWA's address. On a custom domain, set it to https://your.domain",
+          "isOptional": false
+        },
+        "OWA_ADMIN_PASSWORD": {
+          "defaultValue": "${{secret(20)}}",
+          "description": "Password for the 'admin' login, set on first boot only - change it in OWA afterwards",
+          "isOptional": false
+        },
+        "OWA_ADMIN_EMAIL": {
+          "defaultValue": "admin@example.com",
+          "description": "Admin email, set on first boot only",
+          "isOptional": true
+        },
+        "OWA_SITE_URL": {
+          "defaultValue": "https://example.com",
+          "description": "First website to track, created on first boot - add more in OWA",
+          "isOptional": true
+        },
+        "OWA_SECRET": {
+          "defaultValue": "${{secret(48)}}",
+          "description": "Seed for OWA's keys and salts - leave as is",
+          "isOptional": false
+        },
+        "DB_HOST": {
+          "defaultValue": "${{MariaDB.RAILWAY_PRIVATE_DOMAIN}}",
+          "description": "MariaDB host - private network only, leave as is",
+          "isOptional": false
+        },
+        "DB_PASSWORD": {
+          "defaultValue": "${{MariaDB.MARIADB_ROOT_PASSWORD}}",
+          "description": "MariaDB password - wired to the bundled MariaDB, leave as is",
+          "isOptional": false
+        },
+        "DB_NAME": {
+          "defaultValue": "${{MariaDB.MARIADB_DATABASE}}",
+          "description": "Database name - leave as is",
+          "isOptional": false
+        }
+      },
+      "networking": {
+        "serviceDomains": {
+          "<hasDomain>": {}
+        }
+      }
+    },
+    "1f13d287-47c8-4ebe-a025-03cdf1900c44": {
+      "icon": "https://raw.githubusercontent.com/devicons/devicon/master/icons/mariadb/mariadb-original.svg",
+      "name": "MariaDB",
+      "build": {},
+      "deploy": {
+        "startCommand": "docker-entrypoint.sh mariadbd --datadir=/var/lib/mysql/data --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --sql-mode=NO_ENGINE_SUBSTITUTION",
+        "healthcheckPath": null,
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 10
+      },
+      "source": {
+        "image": "mariadb:11.8.9"
+      },
+      "variables": {
+        "MARIADB_ROOT_PASSWORD": {
+          "defaultValue": "${{secret(32)}}",
+          "description": "Auto-generated root password",
+          "isOptional": false
+        },
+        "RAILWAY_DEPLOYMENT_DRAINING_SECONDS": {
+          "defaultValue": "60",
+          "description": "Time for MariaDB to shut down cleanly on redeploy",
+          "isOptional": false
+        },
+        "MARIADB_DATABASE": {
+          "defaultValue": "owa",
+          "description": "Database created on first start",
+          "isOptional": false
+        }
+      },
+      "networking": {
+        "serviceDomains": {}
+      },
+      "volumeMounts": {
+        "1f13d287-47c8-4ebe-a025-03cdf1900c44": {
+          "mountPath": "/var/lib/mysql"
+        }
+      }
+    }
+  }
+}
