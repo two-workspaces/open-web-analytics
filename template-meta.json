@@ -4,5 +4,7 @@
   "description": "Open Web Analytics 1.14: GA-style reports, heatmaps and session replays",
   "category": "Analytics",
   "image": "https://raw.githubusercontent.com/Open-Web-Analytics/Open-Web-Analytics/master/modules/Base/i/owa-logo-100w.png",
-  "deploy_marker": "two-workspaces/open-web-analytics"
+  "deploy_marker": "two-workspaces/open-web-analytics",
+  "id": "eb8a338d-26bb-4ddf-958e-879e10abe18a",
+  "published": true
 }
